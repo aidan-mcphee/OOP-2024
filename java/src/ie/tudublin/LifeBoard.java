@@ -1,61 +1,112 @@
 package ie.tudublin;
 
+import java.util.Map;
+
 import processing.core.PApplet;
-import java.lang.Math;
 
 public class LifeBoard {
+    
     boolean[][] board;
+    boolean[][] next;
 
     int rows;
     int cols;
 
-    float cellwidth;
-    float cellheight;
-
+    float cellWidth;
+    float cellHeight;
     PApplet p;
 
-    public LifeBoard(int cols, PApplet p)
+    public LifeBoard(int rows, int cols, PApplet p)
     {
+        this.rows = rows;
         this.cols = cols;
-        this.p = p;
-
-        cellwidth = p.width / (float) cols;
-        rows = (int) Math.ceil(p.height/cellwidth);
-        System.out.println("floor(" + p.height + "/" + cellwidth + ") = " + cols);
-        System.out.println(p.width + " / " + cols + " = " + cellwidth);
-        System.out.println(rows + " " + cols);
-        cellheight = p.height / (float) rows;
-
+        this.p = p; 
         board = new boolean[rows][cols];
+        cellWidth = p.width / (float) cols;
+        cellHeight = p.height / (float) rows;
+        
     }
+
+
 
     void randomize()
     {
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                float rand = p.random(1.0f);
-                board[row][col] = (rand < 0.5f);
+        for(int row = 0 ; row < rows ; row ++)
+        {
+            for(int col = 0 ; col < cols ; col ++)
+            {
+                float dice = p.random(1.0f);
+                board[row][col] = (dice < 0.5f);                
             }
         }
     }
 
+
     public void update()
     {
+        // The rules are!
+        // If the cell is alive then
+        // If it has < 2 alive neighbours, it dies due to lonelyness
+        // If it has > 3 alive neighbours, it dies due to overcrouding
+        // If it has 2-3 live neighbours, it survives
+        // If the cell is dead, then it comes to life 
+        // in the next generation if it has exactly 3 
+        // live neighbours
 
+        // Write a nested for loop to update the board each frame
+        // Read board, write to next
+        
+        // At the end, swap them like this:
+        // boolean[][] temp = board;
+        // board = next;
+        // next = temp;
     }
 
-    public boolean getState(int row, int col) {
-        return board[row][col];
+    public void setCell(int row, int col, boolean value)
+    {
+        if (row > 0 && col > 0 && row < rows && col < cols)
+        {
+            board[row][col] = value;
+        }
+    }
+
+    public boolean getCell(int row, int col)
+    {
+        if (row > 0 && col > 0 && row < rows && col < cols)
+        {
+            return board[row][col];
+        }
+        return false;
+    }
+
+    public int countCells(int row, int col)
+    {
+        return 0;
     }
 
     public void render()
     {
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                if (board[row][col]) p.fill(255);
-                else p.fill(0);
-                p.rect(col*cellwidth, row*cellwidth, cellwidth, cellwidth);
+        for(int row = 0 ; row < rows ; row ++)
+        {
+            for(int col = 0 ; col < cols ; col ++)
+            {
+                float x = p.map(col, 0, cols, 0, p.width);
+                float y = row * cellHeight;
+                p.stroke(200,255, 255);
+                if (board[row][col])
+                {
+                    p.fill(100, 255, 255);
+                }
+                else
+                {
+                    p.noFill();
+                }
+                p.rect(x, y, cellWidth, cellHeight);
             }
         }
+        
     }
+
+
+
 }
